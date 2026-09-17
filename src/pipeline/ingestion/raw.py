@@ -1,3 +1,12 @@
+"""Persist raw API payloads to disk, unmodified.
+
+Each fetch produces a new timestamped file under data/raw/; nothing is
+overwritten, so the history of what each source returned is preserved.
+
+Input:  payload (dict | list) and a filename prefix
+Output: Path to the written JSON file
+"""
+
 import json
 import logging
 from datetime import datetime, timezone

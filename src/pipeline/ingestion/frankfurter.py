@@ -1,3 +1,12 @@
+"""Fetch USD --> ZAR daily exchange rates from Frankfurter.
+
+Endpoint: /<start>..<end>?from=USD&to=ZAR
+Source data is ECB reference rates; business days only.
+
+Input:  an HTTP session, a start date, and an end date
+Output: path to the raw JSON file written under data/raw/
+"""
+
 import logging
 from datetime import date
 

@@ -1,3 +1,12 @@
+"""Fetch South African CPI from the World Bank API.
+
+Endpoint: /v2/country/ZAF/indicator/FP.CPI.TOTL
+Returns annual CPI as an index (2010 = 100).
+
+Input:  an HTTP session (see http.py)
+Output: path to the raw JSON file written under data/raw/
+"""
+
 import logging
 
 import requests

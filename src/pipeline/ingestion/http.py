@@ -1,3 +1,12 @@
+"""Shared HTTP session for all external API calls.
+
+Provides a requests.Session pre-configured with retries, exponential
+backoff, and a hard timeout, plus a get_json() helper that raises on
+non-2xx responses instead of returning an error body.
+
+Used by: world_bank.py, frankfurter.py
+"""
+
 import logging
 
 import requests

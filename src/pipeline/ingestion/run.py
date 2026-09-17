@@ -1,3 +1,13 @@
+"""CLI entrypoint for the ingestion stage.
+
+Fetches CPI from the World Bank and USD/ZAR from Frankfurter, writing
+each raw payload to data/raw/.
+
+Usage:
+    python -m src.pipeline.ingestion.run [--fx-start YYYY-MM-DD]
+                                         [--fx-end YYYY-MM-DD]
+"""
+
 import argparse
 import logging
 from datetime import date, timedelta
