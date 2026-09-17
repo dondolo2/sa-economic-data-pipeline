@@ -8,4 +8,5 @@ data/processed/*
 !data/processed/.gitkeep
 *.sqlite
 *.db
-.pytest_cache/
+.pytest_cache/echo "*.db" >> .gitignore
+echo "*.sqlite" >> .gitignore
