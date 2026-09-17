@@ -1,0 +1,1 @@
+"""Validation stage: data-quality checks before persistence."""

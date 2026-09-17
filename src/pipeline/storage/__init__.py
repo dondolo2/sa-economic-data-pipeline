@@ -1,0 +1,1 @@
+"""Storage stage: load validated data into SQLite."""

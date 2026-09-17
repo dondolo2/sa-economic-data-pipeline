@@ -1,3 +1,5 @@
+
+
 """Turn raw source payloads into the canonical observation schema.
 
 Canonical schema (matches decisions.md point 5):

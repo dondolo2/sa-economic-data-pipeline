@@ -1,0 +1,1 @@
+"""Transformation stage: raw payloads → canonical schema."""
