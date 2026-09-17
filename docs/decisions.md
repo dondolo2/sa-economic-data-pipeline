@@ -258,3 +258,44 @@ was chosen, not stumbled into.
 5. **SQLite file lives in a Docker volume.** If the volume is removed, the
    data is gone. Re-running the pipeline rebuilds it from raw files — which
    is exactly the point of keeping raw immutable, but it's still worth naming.
+
+## 11. Canonical schema — one shape for all sources
+
+Both sources produce the same five columns:
+`indicator_name, date, value, unit, source`.
+
+**Why a canonical shape at all:** because the loader, the validator, the tests,
+and the dashboard should not know or care which source a row came from. Every
+`if source == 'world_bank'` in the codebase is a bug waiting to happen. One
+shape means one code path.
+
+**Why `date` is a string in the transformed file but `DATE` in the database:**
+because the processed CSV should be diffable and human-readable, and ISO 8601
+dates in a CSV are both. The database parses them on load. Converting to
+`TIMESTAMP` earlier would add timezone semantics we don't want.
+
+## 12. Annual CPI dates: `YYYY-01-01`, not `YYYY-12-31`
+
+The World Bank publishes CPI as an annual average. We must assign it to a
+specific day to fit a time-series schema. Two defensible choices:
+
+- **`YYYY-01-01`** — "value for the calendar year YYYY."
+- **`YYYY-12-31`** — "value at the end of year YYYY."
+
+Chosen **Jan 1**, matching the World Bank's own data portal convention.
+This is a presentation choice, not a claim about measurement timing, and it's
+documented here so it can't be mistaken for one.
+
+**Consequence:** a naive `date`-based join between CPI and FX will miss,
+because CPI lives at Jan 1 and FX lives at every business day. This is
+resolved in the dashboard by joining on **year**, not on date. Noted in
+decisions.md because it will bite anyone who reads the data raw.
+
+## 13. Dropped records are counted, not silently ignored
+
+Every transform logs `kept=N skipped(reason=count, reason=count, ...)`.
+Nothing is dropped without a log line that says how many and why.
+
+**Why:** silent data loss is the single most common bug in production
+pipelines. A pipeline that "succeeds" while quietly discarding 40% of the
+input is worse than one that fails loudly. Counting makes the loss visible.
