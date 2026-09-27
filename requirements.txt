@@ -6,3 +6,5 @@ numpy==2.5.3
 pandas==3.0.5
 python-dateutil==2.9.0.post0
 PyYAML==6.0.3
+altair==6.3.0
+streamlit==1.64.0
