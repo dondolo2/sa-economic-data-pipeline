@@ -17,6 +17,8 @@ import pandas as pd
 
 from .db import connect, init_schema
 from .loader import load_observations
+from .paths import DB_PATH as DEFAULT_DB_PATH
+from .paths import PROCESSED_DIR as DEFAULT_PROCESSED_DIR
 
 logger = logging.getLogger("pipeline.storage")
 
@@ -34,8 +36,8 @@ def latest_processed(in_dir: Path) -> Path:
 def parse_args() -> argparse.Namespace:
     """Parse CLI arguments."""
     p = argparse.ArgumentParser(description="Load processed data into SQLite.")
-    p.add_argument("--db-path", default="data/economic.db")
-    p.add_argument("--in-dir", default="data/processed")
+    p.add_argument("--db-path", default=str(DEFAULT_DB_PATH))
+    p.add_argument("--in-dir", default=str(DEFAULT_PROCESSED_DIR))
     p.add_argument("--log-level", default="INFO")
     return p.parse_args()
 
