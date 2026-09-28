@@ -4,8 +4,10 @@ A batch data pipeline that ingests South African economic indicators from public
 APIs, cleans and validates them into a single canonical schema, and (in later
 stages) loads them into SQLite for analysis and visualization.
 
-**Status:** 🟡 In progress — ingestion, transformation, and validation
-implemented. Database loading and dashboard are in development.
+**Status:** 🟢 Complete. All stages implemented and tested: ingestion,
+transformation, validation, SQLite loading, and Streamlit dashboard.
+
+**Quick start:** `docker compose up` → [http://localhost:8501](http://localhost:8501)
 
 ---
 
@@ -50,6 +52,13 @@ shows trends over time.
   state as running it once
 - Tested transformation and validation logic with boundary cases
 - Containerized, single-command execution
+
+---
+## Demo
+
+Screenshots of the running dashboard: [`docs/demo.md`](docs/demo.md).
+
+![Overview tab](docs/screenshots/overview.png)
 
 ---
 
@@ -332,9 +341,51 @@ head -3 data/processed/economic_indicators_*.csv
 
 ## Running with Docker
 
-_(Day 4 — Dockerfile and compose file will be added alongside the database
-stage. The intent is that `docker compose up` runs ingestion → transformation →
-load in one command, with the SQLite file persisted to a named volume.)_
+```bash
+docker compose up
+```
+
+Dashboard: [http://localhost:8501](http://localhost:8501)
+
+**Prerequisite:** the pipeline must have run at least once so `data/economic.db`
+exists. Compose bind-mounts `data/` from the host, so the container reads the
+same SQLite file the pipeline wrote.
+
+If you haven't run the pipeline yet:
+
+```bash
+python -m src.pipeline.ingestion.run
+python -m src.pipeline.transformation.run
+python -m src.pipeline.storage.run
+docker compose up
+```
+
+### Windows / Git Bash notes
+
+Git Bash mangles POSIX-style paths before passing them to Docker, which causes
+`docker run -v "$(pwd)/data"` to silently mount an empty directory. Two ways
+around it:
+
+1. **Use `docker compose up`** — Compose resolves relative paths itself and
+   doesn't have this problem. This is the recommended path.
+2. **If using `docker run` directly**, use `pwd -W` (native Windows path)
+   instead of `pwd`:
+   ```bash
+   docker run -p 8501:8501 -v "$(pwd -W)/data:/app/data" sa-economic-data-pipeline
+   ```
+
+The same conversion issue affects `docker exec` with absolute container paths.
+Prefix with `MSYS_NO_PATHCONV=1` to disable it:
+
+```bash
+MSYS_NO_PATHCONV=1 docker exec -it <container> ls -la /app/data/
+```
+
+### Why a bind mount and not a named volume
+
+The pipeline runs on the host and writes `data/economic.db`. The container
+reads the same file. A named volume would isolate them, which is the opposite
+of what's needed.
 
 ---
 
