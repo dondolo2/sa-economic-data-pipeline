@@ -299,3 +299,34 @@ Nothing is dropped without a log line that says how many and why.
 **Why:** silent data loss is the single most common bug in production
 pipelines. A pipeline that "succeeds" while quietly discarding 40% of the
 input is worse than one that fails loudly. Counting makes the loss visible.
+
+## 14. Dashboard — Streamlit + Altair
+
+**Why Streamlit:** the dashboard is not the point of this project. The
+pipeline is. Streamlit ships a working UI in Python with no frontend code,
+reads pandas DataFrames directly, and runs with `streamlit run`. No build
+step, no bundler, no node_modules.
+
+**Tradeoff:** Streamlit is not a production dashboarding tool. No auth, no
+row-level permissions, re-runs the whole script on every interaction. For a
+local portfolio demo, none of that matters. For a real internal tool, the
+answer would be Metabase, Superset, or a custom frontend.
+
+**Why Altair over Plotly:** Altair ships with Streamlit, produces clean
+declarative charts, and the extra power of Plotly is wasted on three line
+charts. Fewer dependencies, same result.
+
+**Why three tabs:** Overview (what the data says), CPI vs FX (the crossover
+view that demonstrates the year-join decision from §12), and Data quality
+(what the pipeline loaded, with coverage). Structure makes the demo legible
+in under a minute.
+
+**Why the queries live in `queries.py` and not inside `app.py`:** so they can
+be tested without running Streamlit. The dashboard itself is hard to unit
+test; the SQL behind it is easy. Move as much logic as possible out of the
+UI layer.
+
+**Why the DB is bind-mounted, not a named volume:** the pipeline runs on the
+host and writes `data/economic_indicators.db`. The container reads the same
+file. A named volume would put the DB somewhere the host pipeline can't
+reach without extra plumbing.
