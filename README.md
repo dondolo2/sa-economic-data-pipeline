@@ -7,6 +7,8 @@ stages) loads them into SQLite for analysis and visualization.
 **Status:** 🟢 Complete. All stages implemented and tested: ingestion,
 transformation, validation, SQLite loading, and Streamlit dashboard.
 
+**Demo video (3 min):** [Watch on YouTube](https://youtu.be/_wTqlWF8Gbc)
+
 **Quick start:** `docker compose up` → [http://localhost:8501](http://localhost:8501)
 
 ---
